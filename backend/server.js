@@ -18,7 +18,7 @@ app.use(express.json({ limit: '50mb' }));
 
 app.post('/api/try-on', async (req, res) => {
   try {
-    const { selfie, garmentUrl } = req.body;
+    const { selfie, garmentUrl, garment_des } = req.body;
     
     if (!selfie || !garmentUrl) {
       return res.status(400).json({ error: 'Selfie and garment URL are required.' });
@@ -37,10 +37,10 @@ app.post('/api/try-on', async (req, res) => {
     const output = await client.predict("/tryon", [
       { background: selfieInput, layers: [], composite: null }, // Human image dict
       garmentInput, // Garment image
-      "a clothing item from an e-commerce platform", // garment_des
+      garment_des || "a clothing item from an e-commerce platform", // garment_des
       true, // is_checked (use auto-mask)
-      false, // is_checked_crop
-      30, // denoise_steps
+      true, // is_checked_crop
+      40, // denoise_steps
       42 // seed
     ]);
     

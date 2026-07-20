@@ -47,7 +47,7 @@ function injectFitMirrorButton() {
         productImgUrl = mainImage.getAttribute('data-old-hires');
       }
       
-      chrome.runtime.sendMessage({ action: "SELECT_PRODUCT", imageUrl: productImgUrl });
+      chrome.runtime.sendMessage({ action: "SELECT_PRODUCT", imageUrl: productImgUrl, productTitle: document.title });
     };
 
     // Needs to be positioned relative to the image wrapper
@@ -89,7 +89,7 @@ function injectFitMirrorButton() {
       if (mainImage && mainImage.getAttribute('data-old-hires')) {
         productImgUrl = mainImage.getAttribute('data-old-hires');
       }
-      chrome.runtime.sendMessage({ action: "SELECT_PRODUCT", imageUrl: productImgUrl });
+      chrome.runtime.sendMessage({ action: "SELECT_PRODUCT", imageUrl: productImgUrl, productTitle: document.title });
     };
 
     document.body.appendChild(floatingBtn);

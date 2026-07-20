@@ -6,6 +6,7 @@ import './index.css';
 function App() {
   const [selfie, setSelfie] = useState(null);
   const [productImage, setProductImage] = useState(null);
+  const [productTitle, setProductTitle] = useState(null);
   const [loading, setLoading] = useState(false);
   const [resultImage, setResultImage] = useState(null);
   const [error, setError] = useState(null);
@@ -13,12 +14,13 @@ function App() {
 
   useEffect(() => {
     // Load stored selfie
-    chrome.storage.local.get(['selfie', 'pendingProductImage'], (result) => {
+    chrome.storage.local.get(['selfie', 'pendingProductImage', 'pendingProductTitle'], (result) => {
       if (result.selfie) setSelfie(result.selfie);
       if (result.pendingProductImage) {
         setProductImage(result.pendingProductImage);
+        if (result.pendingProductTitle) setProductTitle(result.pendingProductTitle);
         // Clear pending once loaded
-        chrome.storage.local.remove('pendingProductImage');
+        chrome.storage.local.remove(['pendingProductImage', 'pendingProductTitle']);
       }
     });
 
@@ -26,6 +28,7 @@ function App() {
     const messageListener = (request) => {
       if (request.action === "UPDATE_PRODUCT_IMAGE") {
         setProductImage(request.imageUrl);
+        setProductTitle(request.productTitle);
       }
     };
     chrome.runtime.onMessage.addListener(messageListener);
@@ -60,7 +63,7 @@ function App() {
       const response = await fetch('http://localhost:5000/api/try-on', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selfie, garmentUrl: productImage })
+        body: JSON.stringify({ selfie, garmentUrl: productImage, garment_des: productTitle })
       });
 
       const data = await response.json();
